@@ -32,7 +32,9 @@ class RegisterSerializer(serializers.ModelSerializer):
             date_of_birth=validated_data.get('date_of_birth'),
             gender=validated_data.get('gender'),
             profile_image=validated_data.get('profile_image'),
+            is_active=False 
         )
+        
         return user
 
 
