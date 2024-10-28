@@ -11,8 +11,13 @@ class RegisterView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
+            # delete existing user if inactive incase of failed registration
+            email = serializer.validated_data['email']
+            existing_user = CustomUser.objects.filter(email=email, is_active=False).first()
+            if existing_user:
+                existing_user.delete()
             serializer.save()
-            return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
+            return Response({"message": "OTP sent successfully to verify registration"}, status=status.HTTP_201_CREATED)
         
         # If the serializer is not valid, we return the errors.
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
