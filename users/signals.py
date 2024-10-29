@@ -16,7 +16,7 @@ def generate_otp(sender, instance, created, **kwargs):
 
         # Send OTP to the user's email
         subject = "Your OTP Code for Verification"
-        message = f"Hello {instance.first_name},\n\nYour OTP code for verification is {instance.otp}. This code is valid for 10 minutes."
+        message = f"Hello {instance.first_name},\nYour OTP code for account verification is {instance.otp}. This code is valid for 10 minutes.\nHope you stay healthy and strong.\nThankyou,\nFitcut Fitness"
         
         send_mail(
             subject,
