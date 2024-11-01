@@ -50,6 +50,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
     profile_image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
+    bio=models.TextField(default="This is your bio section! You can edit it to share a little about yourself, your interests, or anything you'd like others to know.",blank=True, null=True)
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
