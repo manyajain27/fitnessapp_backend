@@ -14,6 +14,10 @@ class ConditionSerializer(serializers.ModelSerializer):
         model = HealthCondition
         fields = ['id', 'name']
 
+class ProfileImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['profile_image']
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])

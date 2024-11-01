@@ -4,9 +4,10 @@ from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from .serializers import RegisterSerializer,CustomUserSerializer, HealthDataSerializer
+from .serializers import RegisterSerializer,CustomUserSerializer, HealthDataSerializer,ProfileImageSerializer
 from django.utils import timezone
 from users.models import CustomUser, HealthData
+
 
 class UserProfileView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
@@ -28,6 +29,18 @@ class UserProfileView(generics.RetrieveAPIView):
             "user": user_data,
             "health_data": health_data_serialized
         })
+
+class ProfileImageUpdateView(generics.UpdateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = ProfileImageSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        # Return the currently authenticated user
+        return self.request.user
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
 
 class HealthDataCreateView(generics.CreateAPIView):
     queryset = HealthData.objects.all()
