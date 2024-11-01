@@ -1,11 +1,56 @@
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import MyTokenObtainPairSerializer
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import RegisterSerializer
+from rest_framework.permissions import IsAuthenticated
+from .serializers import RegisterSerializer,CustomUserSerializer, HealthDataSerializer
 from django.utils import timezone
-from users.models import CustomUser
+from users.models import CustomUser, HealthData
+
+class UserProfileView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        health_data = HealthData.objects.filter(user=user).first()  # Get user's health data
+
+        user_data = {
+            "email": user.email,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "profile_image": user.profile_image.url if user.profile_image else None,
+        }
+
+        health_data_serialized = HealthDataSerializer(health_data).data if health_data else None
+
+        return Response({
+            "user": user_data,
+            "health_data": health_data_serialized
+        })
+
+class HealthDataCreateView(generics.CreateAPIView):
+    queryset = HealthData.objects.all()
+    serializer_class = HealthDataSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        # Associate the HealthData with the logged-in user
+        serializer.save(user=self.request.user)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+class HealthDataRetrieveView(generics.RetrieveAPIView):
+    serializer_class = HealthDataSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        try:
+            return HealthData.objects.get(user=self.request.user)
+        except HealthData.DoesNotExist:
+            return None  # Handle the case where health data might not exist for the user
+
 
 class RegisterView(APIView):
     def post(self, request, *args, **kwargs):
