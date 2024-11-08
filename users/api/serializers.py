@@ -4,6 +4,7 @@ from rest_framework import serializers
 from users.models import CustomUser, HealthData, FitnessGoal, HealthCondition
 from django.contrib.auth.password_validation import validate_password
 
+
 class GoalSerializer(serializers.ModelSerializer):
     class Meta:
         model = FitnessGoal
